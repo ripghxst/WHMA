@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* Design tokens are defined in T02. Fonts only for now. */
+@theme inline {
+  --font-serif: var(--font-cardo), Georgia, serif;
+  --font-sans: var(--font-josefin-sans), system-ui, sans-serif;
+}
+
+body {
+  background: #f5f4f4;
+  color: #211e1e;
+  font-family: var(--font-serif);
+}

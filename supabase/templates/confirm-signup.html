@@ -1,0 +1,42 @@
+<!--
+  Supabase → Authentication → Emails → "Confirm signup"
+  Subject: Confirm your WHMA Registry account
+-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fbfaf8;padding:32px 16px;font-family:Georgia,'Times New Roman',serif;color:#211e1e;">
+  <tr>
+    <td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border:1px solid #e3ddd4;">
+        <tr>
+          <td style="background:#1d1614;padding:18px 28px;color:#fbfaf8;font-family:Arial,sans-serif;font-size:14px;letter-spacing:2px;text-transform:uppercase;">
+            <strong>WHMA</strong> Registry
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:32px 28px;">
+            <h1 style="margin:0 0 16px;font-family:Arial,sans-serif;font-size:20px;letter-spacing:1px;text-transform:uppercase;color:#1d1614;font-weight:600;">
+              Confirm your email
+            </h1>
+            <p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#4a3833;">
+              Thank you for joining the Wild Horse &amp; Mustang Association registry.
+              Confirm your email address to activate your account and start registering your horses.
+            </p>
+            <p style="margin:28px 0;">
+              <a href="{{ .RedirectTo }}&token_hash={{ .TokenHash }}&type=email"
+                 style="display:inline-block;background:#3b2d29;color:#fbfaf8;text-decoration:none;padding:12px 22px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;">
+                Confirm email
+              </a>
+            </p>
+            <p style="margin:0;font-size:14px;line-height:1.6;color:#72615b;">
+              If you didn't create an account, you can ignore this email.
+            </p>
+          </td>
+        </tr>
+        <tr>
+          <td style="border-top:1px solid #e3ddd4;padding:16px 28px;font-size:12px;color:#72615b;">
+            Wild Horse &amp; Mustang Association · A RedM community association
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>

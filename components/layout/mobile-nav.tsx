@@ -6,7 +6,10 @@ import { useState } from "react";
 
 import { mainNav, site } from "@/lib/site";
 
-export function MobileNav() {
+type NavItem = { href: string; label: string };
+
+/** `accountLinks` are the signed-in (or Sign in) links shown after the main nav. */
+export function MobileNav({ accountLinks }: { accountLinks: NavItem[] }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
 
@@ -44,20 +47,18 @@ export function MobileNav() {
           className="absolute inset-x-0 top-full border-t border-saddle bg-ink"
         >
           <ul className="page-container flex flex-col pb-4">
-            {[...mainNav, { href: "/sign-in", label: "Sign in" }].map(
-              (item) => (
-                <li key={item.href} className="border-b border-bark">
-                  <Link
-                    href={item.href}
-                    aria-current={pathname === item.href ? "page" : undefined}
-                    onClick={() => setOpen(false)}
-                    className="block py-4 label-caps text-taupe hover:text-paper aria-[current=page]:text-paper"
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ),
-            )}
+            {[...mainNav, ...accountLinks].map((item) => (
+              <li key={item.href} className="border-b border-bark">
+                <Link
+                  href={item.href}
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  onClick={() => setOpen(false)}
+                  className="block py-4 label-caps text-taupe hover:text-paper aria-[current=page]:text-paper"
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
             <li>
               <a
                 href={site.mainSiteUrl}

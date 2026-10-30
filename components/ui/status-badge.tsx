@@ -1,7 +1,7 @@
 import { cn } from "@/lib/cn";
+import type { Enums } from "@/lib/types/database";
 
-export type HorseStatus =
-  "draft" | "pending" | "changes_requested" | "approved" | "rejected";
+export type HorseStatus = Enums<"horse_status">;
 
 // Wording follows the WHMA registration page: approve, ask for adjustments, or deny.
 const statuses: Record<HorseStatus, { label: string; className: string }> = {

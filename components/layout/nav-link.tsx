@@ -22,10 +22,10 @@ export function NavLink({
       href={href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "border-b-2 pt-[3px] pb-1 label-caps transition-colors",
+        "border-b py-1 label-caps transition-colors",
         active
-          ? "border-rust text-ink"
-          : "border-transparent text-saddle hover:border-taupe hover:text-ink",
+          ? "border-rust text-paper"
+          : "border-transparent text-taupe hover:text-paper",
         className,
       )}
     >

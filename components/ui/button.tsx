@@ -7,12 +7,11 @@ type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-xs label-caps whitespace-nowrap transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-xs label-caps text-[0.875rem] whitespace-nowrap transition-colors duration-150 disabled:pointer-events-none disabled:opacity-50";
 
-// Josefin Sans sits high in its line box; the extra top padding centres it optically.
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3 pt-[3px]",
-  md: "h-11 px-5 pt-[3px]",
+  sm: "h-8 px-3",
+  md: "h-11 px-5",
 };
 
 const variants: Record<Variant, string> = {

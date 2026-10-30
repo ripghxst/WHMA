@@ -77,7 +77,7 @@ export default function StyleguidePage() {
     <div className="page-container flex flex-col gap-16 py-14">
       <header>
         <p className="label-caps text-rust">Development only</p>
-        <h1 className="mt-3 text-3xl">Style guide</h1>
+        <h1 className="mt-2 heading-caps text-3xl text-ink">Style guide</h1>
         <p className="mt-3 max-w-2xl text-saddle">
           Every token and component used by the registry. See tasks/DESIGN.md
           for the rules.
@@ -108,6 +108,14 @@ export default function StyleguidePage() {
               <span className={`${size} text-ink`}>{sample}</span>
             </div>
           ))}
+          <div className="flex items-baseline gap-6 border-b border-rule pb-3">
+            <span className="w-20 shrink-0 font-mono text-xs text-dust">
+              heading-caps
+            </span>
+            <span className="heading-caps text-2xl text-dust">
+              Recent registrations
+            </span>
+          </div>
           <div className="flex items-baseline gap-6 border-b border-rule pb-3">
             <span className="w-20 shrink-0 font-mono text-xs text-dust">
               label-caps

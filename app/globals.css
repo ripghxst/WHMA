@@ -8,11 +8,11 @@
 @theme {
   --color-*: initial;
 
-  /* Paper & ink */
-  --color-paper: #f4efe6;
-  --color-paper-deep: #ebe3d5;
-  --color-card: #fbf8f2;
-  --color-rule: #d5c9b7;
+  /* Page & ink. Clean light pages like ttr-whma.weebly.com, warm only in the browns. */
+  --color-paper: #fbfaf8;
+  --color-paper-deep: #f2eee8;
+  --color-card: #ffffff;
+  --color-rule: #e3ddd4;
   --color-taupe: #baafa8;
   --color-dust: #72615b;
   --color-saddle: #4a3833;
@@ -54,7 +54,8 @@
   --text-4xl: 3.5rem;
   --text-4xl--line-height: 3.65rem;
 
-  --tracking-label: 0.14em;
+  --tracking-label: 0.12em;
+  --tracking-heading: 0.04em;
 
   /* Square, printed feel */
   --radius-*: initial;
@@ -69,7 +70,7 @@
 
 @theme inline {
   --font-serif: var(--font-cardo), Georgia, "Times New Roman", serif;
-  --font-sans: var(--font-josefin-sans), "Trebuchet MS", sans-serif;
+  --font-display: var(--font-advent-pro), "Arial Narrow", sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "Courier New", monospace;
 }
 
@@ -109,10 +110,19 @@
 
 /* Small uppercase label, like the field names on a paper registration form. */
 @utility label-caps {
-  font-family: var(--font-sans);
-  font-size: var(--text-xs);
-  line-height: var(--text-xs--line-height);
+  font-family: var(--font-display);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.1rem;
   letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* Uppercase brand heading, as used on the WHMA website. */
+@utility heading-caps {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: var(--tracking-heading);
   text-transform: uppercase;
 }
 

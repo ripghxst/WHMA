@@ -18,7 +18,9 @@ export default function Error({
   return (
     <div className="page-container flex flex-col items-start py-24">
       <p className="label-caps text-rust">Something went wrong</p>
-      <h1 className="mt-3 text-3xl">This page could not be loaded</h1>
+      <h1 className="mt-2 heading-caps text-3xl text-ink">
+        This page could not be loaded
+      </h1>
       <p className="mt-4 max-w-lg text-lg text-saddle">
         Please try again. If it keeps happening, let the registration team know
         on Discord.

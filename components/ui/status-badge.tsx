@@ -36,7 +36,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-xs border-[3px] border-double px-2 pt-[3px] pb-px label-caps whitespace-nowrap",
+        "inline-flex items-center rounded-xs border-[3px] border-double px-2 py-0.5 label-caps whitespace-nowrap",
         tone,
         className,
       )}

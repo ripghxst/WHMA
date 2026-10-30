@@ -17,7 +17,7 @@ function pageItems(page: number, total: number): Array<number | "gap"> {
 }
 
 const item =
-  "label-caps inline-flex h-9 min-w-9 items-center justify-center px-2 pt-[3px]";
+  "label-caps inline-flex h-9 min-w-9 items-center justify-center px-2";
 
 export function Pagination({
   page,

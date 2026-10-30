@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cardo, IBM_Plex_Mono, Josefin_Sans } from "next/font/google";
+import { Advent_Pro, Cardo, IBM_Plex_Mono } from "next/font/google";
 
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
@@ -13,8 +13,9 @@ const cardo = Cardo({
   style: ["normal", "italic"],
 });
 
-const josefinSans = Josefin_Sans({
-  variable: "--font-josefin-sans",
+// The WHMA website's heading face.
+const adventPro = Advent_Pro({
+  variable: "--font-advent-pro",
   subsets: ["latin"],
 });
 
@@ -36,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${cardo.variable} ${josefinSans.variable} ${plexMono.variable} h-full antialiased`}
+      className={`${cardo.variable} ${adventPro.variable} ${plexMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <a

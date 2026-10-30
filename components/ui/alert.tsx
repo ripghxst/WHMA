@@ -39,9 +39,7 @@ export function Alert({
       )}
     >
       {title && (
-        <p className={cn("mb-1 pt-0.5 label-caps", titleTones[tone])}>
-          {title}
-        </p>
+        <p className={cn("mb-1 label-caps", titleTones[tone])}>{title}</p>
       )}
       {children && <div className="text-base text-text">{children}</div>}
     </div>

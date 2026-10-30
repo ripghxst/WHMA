@@ -1,13 +1,133 @@
 @import "tailwindcss";
 
-/* Design tokens are defined in T02. Fonts only for now. */
-@theme inline {
-  --font-serif: var(--font-cardo), Georgia, serif;
-  --font-sans: var(--font-josefin-sans), system-ui, sans-serif;
+/*
+ * WHMA design tokens. See tasks/DESIGN.md.
+ * Tailwind's default palette, radii and shadows are cleared on purpose:
+ * only the tokens below exist, so off-brand colours can't slip in.
+ */
+@theme {
+  --color-*: initial;
+
+  /* Paper & ink */
+  --color-paper: #f4efe6;
+  --color-paper-deep: #ebe3d5;
+  --color-card: #fbf8f2;
+  --color-rule: #d5c9b7;
+  --color-taupe: #baafa8;
+  --color-dust: #72615b;
+  --color-saddle: #4a3833;
+  --color-bark: #3b2d29;
+  --color-ink: #1d1614;
+  --color-text: #211e1e;
+  --color-white: #ffffff;
+
+  /* Single accent: rust, from the brown family */
+  --color-rust: #8b4a26;
+  --color-rust-deep: #6f3a1d;
+
+  /* Registration status */
+  --color-pending: #7a5c14;
+  --color-pending-tint: #f3e7c8;
+  --color-changes: #9a4a1c;
+  --color-changes-tint: #f5dfcf;
+  --color-approved: #3e5b34;
+  --color-approved-tint: #dfe8d6;
+  --color-rejected: #7d2a25;
+  --color-rejected-tint: #f2d9d5;
+
+  /* Type scale (17px body) */
+  --text-*: initial;
+  --text-xs: 0.75rem;
+  --text-xs--line-height: 1.1rem;
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.35rem;
+  --text-base: 1.0625rem;
+  --text-base--line-height: 1.65rem;
+  --text-lg: 1.25rem;
+  --text-lg--line-height: 1.8rem;
+  --text-xl: 1.5rem;
+  --text-xl--line-height: 2rem;
+  --text-2xl: 2rem;
+  --text-2xl--line-height: 2.4rem;
+  --text-3xl: 2.75rem;
+  --text-3xl--line-height: 3rem;
+  --text-4xl: 3.5rem;
+  --text-4xl--line-height: 3.65rem;
+
+  --tracking-label: 0.14em;
+
+  /* Square, printed feel */
+  --radius-*: initial;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+
+  --shadow-*: initial;
+  --shadow-card:
+    0 1px 0 0 rgb(29 22 20 / 0.05), 0 1px 3px 0 rgb(29 22 20 / 0.06);
+  --shadow-dialog: 0 12px 40px -8px rgb(29 22 20 / 0.35);
 }
 
-body {
-  background: #f5f4f4;
-  color: #211e1e;
-  font-family: var(--font-serif);
+@theme inline {
+  --font-serif: var(--font-cardo), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-josefin-sans), "Trebuchet MS", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "Courier New", monospace;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    background-color: var(--color-paper);
+  }
+
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-text);
+    font-family: var(--font-serif);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-ink);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    background-color: var(--color-taupe);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-rust);
+    outline-offset: 2px;
+  }
+}
+
+/* Small uppercase label, like the field names on a paper registration form. */
+@utility label-caps {
+  font-family: var(--font-sans);
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+/* Ledger-style double rule. */
+@utility rule-double {
+  border-bottom: 3px double var(--color-bark);
+}
+
+@utility page-container {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+
+  @media (width >= 40rem) {
+    padding-inline: 1.5rem;
+  }
 }

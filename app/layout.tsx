@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import { Cardo, Josefin_Sans } from "next/font/google";
+import { Cardo, IBM_Plex_Mono, Josefin_Sans } from "next/font/google";
+
+import { SiteFooter } from "@/components/layout/site-footer";
+import { SiteHeader } from "@/components/layout/site-header";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 const cardo = Cardo({
@@ -14,22 +18,39 @@ const josefinSans = Josefin_Sans({
   subsets: ["latin"],
 });
 
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+});
+
 export const metadata: Metadata = {
   title: {
-    default: "WHMA Horse Registry",
-    template: "%s · WHMA Horse Registry",
+    default: site.name,
+    template: `%s · ${site.name}`,
   },
-  description:
-    "The official horse registry of the Wild Horse & Mustang Association.",
+  description: `The official horse registry of the ${site.association}.`,
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${cardo.variable} ${josefinSans.variable} h-full antialiased`}
+      className={`${cardo.variable} ${josefinSans.variable} ${plexMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">
+        <a
+          href="#main"
+          className="sr-only z-50 bg-ink px-4 py-3 label-caps text-paper focus:not-sr-only focus:absolute focus:top-2 focus:left-2"
+        >
+          Skip to content
+        </a>
+        <SiteHeader />
+        <main id="main" className="flex-1">
+          {children}
+        </main>
+        <SiteFooter />
+      </body>
     </html>
   );
 }

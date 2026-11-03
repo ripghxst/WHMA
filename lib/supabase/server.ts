@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
+import { connection } from "next/server";
 
 import { env } from "@/lib/env";
 import type { Database } from "@/lib/types/database";
@@ -9,6 +10,9 @@ import type { Database } from "@/lib/types/database";
  * Create a new one per request; never share it between requests.
  */
 export async function createClient() {
+  // Supabase calls are request-time work: the auth client reads the clock,
+  // which Next only allows after this marker.
+  await connection();
   const cookieStore = await cookies();
 
   return createServerClient<Database>(

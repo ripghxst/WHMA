@@ -1,7 +1,5 @@
 import "server-only";
 
-import { connection } from "next/server";
-
 import { createClient } from "@/lib/supabase/server";
 
 export const PAGE_SIZE = 24;
@@ -63,7 +61,6 @@ const COLUMNS = `id, registered_name, barn_name, registration_number, sex, pheno
 
 /** Approved horses matching the filters, plus the total for pagination. */
 export async function listRegistry(filters: RegistryFilters) {
-  await connection();
   const supabase = await createClient();
 
   let query = supabase

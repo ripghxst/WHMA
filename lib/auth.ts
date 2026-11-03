@@ -2,7 +2,6 @@ import "server-only";
 
 import type { AuthError } from "@supabase/supabase-js";
 import { notFound, redirect } from "next/navigation";
-import { connection } from "next/server";
 import { cache } from "react";
 
 import { createClient } from "@/lib/supabase/server";
@@ -12,8 +11,6 @@ import { createClient } from "@/lib/supabase/server";
  * the header, layouts and pages can all call it without extra queries.
  */
 export const getSession = cache(async () => {
-  // Session checks are request-time work (getClaims reads the clock).
-  await connection();
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;

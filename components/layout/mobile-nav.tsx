@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 import { mainNav, site } from "@/lib/site";
@@ -11,7 +10,6 @@ type NavItem = { href: string; label: string };
 /** `accountLinks` are the signed-in (or Sign in) links shown after the main nav. */
 export function MobileNav({ accountLinks }: { accountLinks: NavItem[] }) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
 
   return (
     <div className="md:hidden">
@@ -51,9 +49,8 @@ export function MobileNav({ accountLinks }: { accountLinks: NavItem[] }) {
               <li key={item.href} className="border-b border-bark">
                 <Link
                   href={item.href}
-                  aria-current={pathname === item.href ? "page" : undefined}
                   onClick={() => setOpen(false)}
-                  className="block py-4 label-caps text-taupe hover:text-paper aria-[current=page]:text-paper"
+                  className="block py-4 label-caps text-taupe hover:text-paper"
                 >
                   {item.label}
                 </Link>

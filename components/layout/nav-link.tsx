@@ -5,15 +5,24 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/cn";
 
-export function NavLink({
-  href,
-  children,
-  className,
-}: {
+type NavLinkProps = {
   href: string;
   children: React.ReactNode;
   className?: string;
-}) {
+};
+
+export function navLinkClass(active: boolean, className?: string) {
+  return cn(
+    "border-b py-1 label-caps transition-colors",
+    active
+      ? "border-rust text-paper"
+      : "border-transparent text-taupe hover:text-paper",
+    className,
+  );
+}
+
+/** Header link that marks the current section. Must render inside <Suspense>. */
+export function NavLink({ href, children, className }: NavLinkProps) {
   const pathname = usePathname();
   const active = pathname === href || pathname.startsWith(`${href}/`);
 
@@ -21,14 +30,17 @@ export function NavLink({
     <Link
       href={href}
       aria-current={active ? "page" : undefined}
-      className={cn(
-        "border-b py-1 label-caps transition-colors",
-        active
-          ? "border-rust text-paper"
-          : "border-transparent text-taupe hover:text-paper",
-        className,
-      )}
+      className={navLinkClass(active, className)}
     >
+      {children}
+    </Link>
+  );
+}
+
+/** Same look without the current-section marker, for the prerendered shell. */
+export function StaticNavLink({ href, children, className }: NavLinkProps) {
+  return (
+    <Link href={href} className={navLinkClass(false, className)}>
       {children}
     </Link>
   );

@@ -76,6 +76,17 @@ async function Dashboard({
           Welcome to the WHMA registry. You can now register your horses.
         </Alert>
       )}
+      {params.submitted && (
+        <Alert tone="success" title="Submitted for review" className="mb-8">
+          The registration board will look over your horse. You&apos;ll see its
+          status here.
+        </Alert>
+      )}
+      {params.saved && (
+        <Alert tone="success" className="mb-8">
+          Your changes have been saved.
+        </Alert>
+      )}
       {params.password === "updated" && (
         <Alert tone="success" className="mb-8">
           Your password has been changed.

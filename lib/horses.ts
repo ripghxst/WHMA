@@ -55,23 +55,32 @@ type SubmissionFields = Pick<
   | "dam_name"
 >;
 
+export type MissingField = { field: string; label: string };
+
 /**
- * What's still missing before a horse can be submitted for review.
- * Shared by the dashboard Submit action and the registration form (T07).
+ * What's still missing before a horse can be submitted for review, by form field.
+ * Shared by the dashboard Submit action and the registration form.
  */
 export function missingForSubmission(
   horse: SubmissionFields,
   photoCount: number,
-) {
-  const missing: string[] = [];
-  if (!horse.registered_name?.trim()) missing.push("registered name");
-  if (!horse.sex) missing.push("sex");
-  if (!horse.breed_id) missing.push("listed breed");
-  if (!horse.phenotype?.trim()) missing.push("coat (phenotype)");
-  if (!horse.genotype?.trim()) missing.push("genotype");
-  if (!horse.base_stats?.trim()) missing.push("base stats");
-  if (!horse.sire_id && !horse.sire_name?.trim()) missing.push("sire");
-  if (!horse.dam_id && !horse.dam_name?.trim()) missing.push("dam");
-  if (photoCount < 1) missing.push("at least one photo");
+): MissingField[] {
+  const missing: MissingField[] = [];
+  const need = (ok: unknown, field: string, label: string) => {
+    if (!ok) missing.push({ field, label });
+  };
+  need(horse.registered_name?.trim(), "registered_name", "registered name");
+  need(horse.sex, "sex", "sex");
+  need(horse.breed_id, "breed_id", "listed breed");
+  need(horse.phenotype?.trim(), "phenotype", "coat (phenotype)");
+  need(horse.genotype?.trim(), "genotype", "genotype");
+  need(horse.base_stats?.trim(), "base_stats", "base stats");
+  need(horse.sire_id || horse.sire_name?.trim(), "sire", "sire");
+  need(horse.dam_id || horse.dam_name?.trim(), "dam", "dam");
+  need(photoCount > 0, "photos", "at least one photo");
   return missing;
 }
+
+export const MAX_PHOTOS = 5;
+export const MAX_PHOTO_BYTES = 5 * 1024 * 1024;
+export const PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];

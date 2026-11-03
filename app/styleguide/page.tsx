@@ -129,7 +129,7 @@ export default function StyleguidePage() {
             <span className="w-20 shrink-0 font-mono text-xs text-dust">
               font-mono
             </span>
-            <span className="font-mono">
+            <span className="font-mono!">
               WHMA-KM1-526134 · B_CR_RN · [9-9] 9/8/9/8
             </span>
           </div>
@@ -175,7 +175,7 @@ export default function StyleguidePage() {
             label="Genotype"
             error="Use the in-game breeding code, e.g. B_CR_RN"
           >
-            <Input defaultValue="buckskin roan" className="font-mono" />
+            <Input defaultValue="buckskin roan" className="font-mono!" />
           </Field>
           <Field
             id="sg-disabled"

@@ -3,13 +3,21 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { MobileNav } from "@/components/layout/mobile-nav";
-import { NavLink } from "@/components/layout/nav-link";
+import { NavLink, StaticNavLink } from "@/components/layout/nav-link";
 import { getSession } from "@/lib/auth";
 import { mainNav } from "@/lib/site";
 
 type Account = { name: string; isAdmin: boolean } | null;
 
-function HeaderNav({ account }: { account: Account }) {
+function HeaderNav({
+  account,
+  live = true,
+}: {
+  account: Account;
+  /** false in the prerendered fallback, where the current path isn't known yet. */
+  live?: boolean;
+}) {
+  const Item = live ? NavLink : StaticNavLink;
   const accountLinks = account
     ? [
         ...(account.isAdmin ? [{ href: "/admin", label: "Board" }] : []),
@@ -22,15 +30,15 @@ function HeaderNav({ account }: { account: Account }) {
     <>
       <nav aria-label="Main" className="hidden items-center gap-8 md:flex">
         {mainNav.map((item) => (
-          <NavLink key={item.href} href={item.href}>
+          <Item key={item.href} href={item.href}>
             {item.label}
-          </NavLink>
+          </Item>
         ))}
         {account ? (
           <>
             <span className="h-5 w-px bg-saddle" aria-hidden />
-            {account.isAdmin && <NavLink href="/admin">Board</NavLink>}
-            <NavLink href="/dashboard">My horses</NavLink>
+            {account.isAdmin && <Item href="/admin">Board</Item>}
+            <Item href="/dashboard">My horses</Item>
             <Link
               href="/account"
               className="max-w-40 truncate rounded-xs border border-dust px-4 py-2 label-caps text-paper transition-colors hover:border-paper"
@@ -88,7 +96,7 @@ export function SiteHeader() {
         </Link>
 
         {/* The static shell renders the signed-out nav; the session streams in. */}
-        <Suspense fallback={<HeaderNav account={null} />}>
+        <Suspense fallback={<HeaderNav account={null} live={false} />}>
           <SessionNav />
         </Suspense>
       </div>

@@ -34,7 +34,9 @@ export async function submitHorse(horseId: string): Promise<ActionResult> {
     horse.horse_photos[0]?.count ?? 0,
   );
   if (missing.length) {
-    return { error: `Before submitting, add: ${missing.join(", ")}.` };
+    return {
+      error: `Before submitting, add: ${missing.map((m) => m.label).join(", ")}.`,
+    };
   }
 
   const { error } = await supabase

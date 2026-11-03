@@ -1,11 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 
+import { RegistryList } from "@/components/registry/registry-list";
 import { Button, ButtonLink } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/field";
-import { TBody, TD, TH, THead, TR, Table } from "@/components/ui/table";
-import { formatDate } from "@/lib/format";
-import { sampleEntries } from "@/lib/sample-entries";
+import { recentRegistrations } from "@/lib/registry";
 import { classifiedBreeds, site } from "@/lib/site";
 import herdRunning from "@/public/images/herd-running.jpg";
 import herdDesert from "@/public/images/herd-desert.jpg";
@@ -33,6 +34,18 @@ function SectionTitle({
       {children}
     </h2>
   );
+}
+
+async function RecentRegistrations() {
+  const horses = await recentRegistrations(5);
+  if (horses.length === 0) {
+    return (
+      <EmptyState title="No horses registered yet">
+        Approved horses will be listed here.
+      </EmptyState>
+    );
+  }
+  return <RegistryList horses={horses} />;
 }
 
 export default function HomePage() {
@@ -103,54 +116,13 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="mt-6 hidden sm:block">
-            <Table>
-              <THead>
-                <tr>
-                  <TH>WHMA No.</TH>
-                  <TH>Registered name</TH>
-                  <TH>Breed</TH>
-                  <TH className="hidden md:table-cell">Sex</TH>
-                  <TH className="hidden lg:table-cell">Coat</TH>
-                  <TH className="hidden md:table-cell">Owner</TH>
-                  <TH className="text-right">Registered</TH>
-                </tr>
-              </THead>
-              <TBody>
-                {sampleEntries.map((h) => (
-                  <TR key={h.number}>
-                    <TD className="font-mono text-sm whitespace-nowrap">
-                      {h.number}
-                    </TD>
-                    <TD className="text-ink">{h.name}</TD>
-                    <TD>{h.breed}</TD>
-                    <TD className="hidden md:table-cell">{h.sex}</TD>
-                    <TD className="hidden text-saddle lg:table-cell">
-                      {h.coat}
-                    </TD>
-                    <TD className="hidden md:table-cell">{h.owner}</TD>
-                    <TD className="text-right text-sm whitespace-nowrap text-dust">
-                      {formatDate(h.date)}
-                    </TD>
-                  </TR>
-                ))}
-              </TBody>
-            </Table>
+          <div className="mt-6">
+            <Suspense
+              fallback={<p className="py-8 text-dust italic">Loading…</p>}
+            >
+              <RecentRegistrations />
+            </Suspense>
           </div>
-
-          <ul className="mt-4 sm:hidden">
-            {sampleEntries.map((h) => (
-              <li key={h.number} className="border-b border-rule py-3">
-                <p className="text-ink">{h.name}</p>
-                <p className="mt-0.5 font-mono text-xs text-saddle">
-                  {h.number}
-                </p>
-                <p className="mt-1 text-sm text-dust">
-                  {h.breed}, {h.sex.toLowerCase()} · {formatDate(h.date)}
-                </p>
-              </li>
-            ))}
-          </ul>
         </section>
 
         <section

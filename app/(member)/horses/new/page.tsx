@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { requireUser } from "@/lib/auth";
+import { loadBreeds } from "@/lib/breeds";
 import { emptyHorse } from "@/lib/validation/horse";
 
 import { HorseForm } from "../horse-form";
-import { loadBreeds } from "../load";
 
 export const metadata: Metadata = { title: "Register a horse" };
 

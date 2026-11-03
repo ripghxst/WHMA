@@ -6,12 +6,12 @@ import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { requireUser } from "@/lib/auth";
+import { loadBreeds } from "@/lib/breeds";
 import { isEditable, photoUrl } from "@/lib/horses";
 import { createClient } from "@/lib/supabase/server";
 
 import type { ParentOption } from "../../actions";
 import { HorseForm } from "../../horse-form";
-import { loadBreeds } from "../../load";
 import type { ParentValue } from "../../parent-field";
 
 export const metadata: Metadata = { title: "Edit horse" };

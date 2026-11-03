@@ -2,7 +2,7 @@ import "server-only";
 
 import { createClient } from "@/lib/supabase/server";
 
-/** Breeds for the form selects, classified first. */
+/** All breeds for selects, classified first. */
 export async function loadBreeds() {
   const supabase = await createClient();
   const { data, error } = await supabase

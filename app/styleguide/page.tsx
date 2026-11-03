@@ -10,7 +10,6 @@ import { Panel, SectionHeading } from "@/components/ui/panel";
 import { StatusBadge, type HorseStatus } from "@/components/ui/status-badge";
 import { TBody, TD, TH, THead, TR, Table } from "@/components/ui/table";
 import { formatDate } from "@/lib/format";
-import { sampleEntries } from "@/lib/sample-entries";
 import { classifiedBreeds } from "@/lib/site";
 
 import { DialogDemo } from "./dialog-demo";
@@ -46,6 +45,27 @@ const typeScale = [
   ["text-base", "Body text. Registered horses are reviewed by the board."],
   ["text-sm", "Secondary text, captions and hints."],
 ] as const;
+
+const demoRows = [
+  {
+    number: "WHMA-AM2-314625",
+    name: "[WCRX] Knight's Rules Apply",
+    breed: "Mustang",
+    date: "2026-08-05",
+  },
+  {
+    number: "WHMA-KM1-526134",
+    name: "(SPOT) Pepper",
+    breed: "Morgan",
+    date: "2026-08-05",
+  },
+  {
+    number: "WHMA-ZB2-243561",
+    name: "(PETE) Safari",
+    breed: "Zebra",
+    date: "2026-08-07",
+  },
+];
 
 const statuses: HorseStatus[] = [
   "draft",
@@ -231,7 +251,7 @@ export default function StyleguidePage() {
             </tr>
           </THead>
           <TBody>
-            {sampleEntries.slice(0, 3).map((h, i) => (
+            {demoRows.map((h, i) => (
               <TR key={h.number}>
                 <TD className="font-mono text-sm">{h.number}</TD>
                 <TD className="text-ink">{h.name}</TD>

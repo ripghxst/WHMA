@@ -34,6 +34,14 @@ export function sexLabel(sex: Enums<"horse_sex"> | null) {
   return sex ? sexLabels[sex] : null;
 }
 
+/** Public profile URL: by WHMA number, or by id for horses without one (Foundation). */
+export function horseHref(horse: {
+  id: string;
+  registration_number: string | null;
+}) {
+  return `/horses/${horse.registration_number ?? horse.id}`;
+}
+
 /** Statuses a member can still edit, submit or delete. */
 export const EDITABLE_STATUSES: HorseStatus[] = ["draft", "changes_requested"];
 

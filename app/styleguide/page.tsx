@@ -9,7 +9,8 @@ import { Pagination } from "@/components/ui/pagination";
 import { Panel, SectionHeading } from "@/components/ui/panel";
 import { StatusBadge, type HorseStatus } from "@/components/ui/status-badge";
 import { TBody, TD, TH, THead, TR, Table } from "@/components/ui/table";
-import { formatDate, sampleEntries } from "@/lib/sample-entries";
+import { formatDate } from "@/lib/format";
+import { sampleEntries } from "@/lib/sample-entries";
 import { classifiedBreeds } from "@/lib/site";
 
 import { DialogDemo } from "./dialog-demo";

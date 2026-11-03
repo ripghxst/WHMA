@@ -47,12 +47,3 @@ export const sampleEntries = [
     date: "2026-08-05",
   },
 ];
-
-export function formatDate(iso: string) {
-  return new Date(`${iso}T00:00:00Z`).toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  });
-}

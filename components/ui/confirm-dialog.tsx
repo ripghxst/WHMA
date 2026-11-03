@@ -12,6 +12,7 @@ type ConfirmDialogProps = {
   cancelLabel?: string;
   tone?: "primary" | "danger";
   triggerVariant?: "primary" | "secondary" | "ghost" | "danger";
+  triggerSize?: "sm" | "md";
   /** Runs when confirmed. For server mutations pass a Server Function. */
   onConfirm: () => void | Promise<void>;
 };
@@ -25,6 +26,7 @@ export function ConfirmDialog({
   cancelLabel = "Cancel",
   tone = "primary",
   triggerVariant = "secondary",
+  triggerSize = "md",
   onConfirm,
 }: ConfirmDialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -32,7 +34,11 @@ export function ConfirmDialog({
 
   return (
     <>
-      <Button variant={triggerVariant} onClick={() => ref.current?.showModal()}>
+      <Button
+        variant={triggerVariant}
+        size={triggerSize}
+        onClick={() => ref.current?.showModal()}
+      >
         {trigger}
       </Button>
       <dialog

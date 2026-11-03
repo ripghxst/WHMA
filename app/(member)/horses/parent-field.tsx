@@ -42,24 +42,29 @@ export function ParentField({
   );
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<ParentOption[] | null>(null);
+  const [open, setOpen] = useState(false);
   const [searching, startSearch] = useTransition();
 
-  // Search as the member types, after a short pause.
+  // Suggest registered horses as soon as the box is focused, then narrow the
+  // list as the member types (after a short pause).
   useEffect(() => {
-    if (mode !== "registered" || value.linked || query.trim().length < 2)
-      return;
-    const timer = setTimeout(() => {
-      startSearch(async () => {
-        setResults(await searchParents(query, sex, excludeId));
-      });
-    }, 300);
+    if (mode !== "registered" || value.linked || !open) return;
+    const timer = setTimeout(
+      () => {
+        startSearch(async () => {
+          setResults(await searchParents(query, sex, excludeId));
+        });
+      },
+      query ? 250 : 0,
+    );
     return () => clearTimeout(timer);
-  }, [query, mode, sex, excludeId, value.linked]);
+  }, [query, open, mode, sex, excludeId, value.linked]);
 
   const switchMode = (next: "registered" | "manual") => {
     setMode(next);
     setResults(null);
     setQuery("");
+    setOpen(false);
     onChange({ linked: null, name: "", breedId: null });
   };
 
@@ -120,60 +125,84 @@ export function ParentField({
             </Button>
           </div>
         ) : (
-          <div>
+          <div
+            onBlur={(e) => {
+              // Close the list when focus leaves the search box and its results.
+              if (!e.currentTarget.contains(e.relatedTarget)) setOpen(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setOpen(false);
+            }}
+          >
             <Field
               id={`${uid}-search`}
               label={`Find the ${label.toLowerCase()}`}
-              hint={`Search approved ${sex}s by name or WHMA number.`}
+              hint={`Choose from approved ${sex}s, or type a name or WHMA number.`}
             >
               <Input
                 type="search"
                 value={query}
+                onFocus={() => setOpen(true)}
                 onChange={(e) => {
                   setQuery(e.target.value);
-                  if (e.target.value.trim().length < 2) setResults(null);
+                  setOpen(true);
                 }}
                 placeholder="e.g. Knight or WHMA-AM2"
                 autoComplete="off"
               />
             </Field>
-            {searching && (
-              <p className="mt-2 text-sm text-dust italic">Searching…</p>
+            {open && !results && searching && (
+              <p className="mt-2 text-sm text-dust italic">Loading…</p>
             )}
-            {!searching && results && (
-              <ul className="mt-2 divide-y divide-rule rounded-xs border border-rule bg-paper">
-                {results.length === 0 ? (
-                  <li className="px-4 py-3 text-sm text-dust italic">
-                    No registered {sex}s match. If the {label.toLowerCase()}{" "}
-                    isn&apos;t registered, choose &ldquo;Not registered&rdquo;
-                    above.
-                  </li>
-                ) : (
-                  results.map((r) => (
-                    <li key={r.id}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          onChange({ linked: r, name: "", breedId: null });
-                          setResults(null);
-                          setQuery("");
-                        }}
-                        className="flex w-full items-baseline justify-between gap-4 px-4 py-3 text-left hover:bg-card"
-                      >
-                        <span>
-                          <span className="text-ink">{r.name}</span>
-                          <span className="ml-2 text-sm text-dust">
-                            {r.breed}
-                          </span>
-                        </span>
-                        <span className="shrink-0 font-mono text-xs text-saddle">
-                          {r.number ?? (r.foundation ? "Foundation" : "")}
-                        </span>
-                      </button>
-                    </li>
-                  ))
+            {open && results && (
+              <div
+                className={cn(
+                  "mt-2 rounded-xs border border-rule bg-paper transition-opacity",
+                  searching && "opacity-60",
                 )}
-              </ul>
+              >
+                <p className="border-b border-rule px-4 py-2 label-caps text-dust">
+                  {query.trim()
+                    ? `Matching ${sex}s`
+                    : `Registered ${sex}s, A to Z`}
+                </p>
+                <ul className="divide-y divide-rule">
+                  {results.length === 0 ? (
+                    <li className="px-4 py-3 text-sm text-dust italic">
+                      {query.trim()
+                        ? `No registered ${sex}s match.`
+                        : `There are no registered ${sex}s yet.`}{" "}
+                      If the {label.toLowerCase()} isn&apos;t registered, choose
+                      &ldquo;Not registered&rdquo; above.
+                    </li>
+                  ) : (
+                    results.map((r) => (
+                      <li key={r.id}>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            onChange({ linked: r, name: "", breedId: null });
+                            setResults(null);
+                            setQuery("");
+                            setOpen(false);
+                          }}
+                          className="flex w-full items-baseline justify-between gap-4 px-4 py-3 text-left hover:bg-card"
+                        >
+                          <span>
+                            <span className="text-ink">{r.name}</span>
+                            <span className="ml-2 text-sm text-dust">
+                              {r.breed}
+                            </span>
+                          </span>
+                          <span className="shrink-0 font-mono text-xs text-saddle">
+                            {r.number ?? (r.foundation ? "Foundation" : "")}
+                          </span>
+                        </button>
+                      </li>
+                    ))
+                  )}
+                </ul>
+              </div>
             )}
           </div>
         ))}

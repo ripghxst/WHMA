@@ -160,7 +160,11 @@ export type ParentOption = {
   foundation: boolean;
 };
 
-/** Registered horses (approved or Foundation) of the given sex, by name or WHMA number. */
+/**
+ * Registered horses (approved or Foundation) of the given sex, by name or WHMA
+ * number. With an empty query it returns the first ones alphabetically, so the
+ * picker can suggest parents before the member types anything.
+ */
 export async function searchParents(
   query: string,
   sex: "stallion" | "mare",
@@ -169,7 +173,6 @@ export async function searchParents(
   await requireUser();
   // Characters with meaning in PostgREST filters are stripped.
   const q = query.replace(/[,()%*\\]/g, " ").trim();
-  if (q.length < 2) return [];
 
   const supabase = await createClient();
   let request = supabase
@@ -179,9 +182,13 @@ export async function searchParents(
     )
     .eq("status", "approved")
     .eq("sex", sex)
-    .or(`registered_name.ilike.%${q}%,registration_number.ilike.%${q}%`)
     .order("registered_name")
     .limit(8);
+  if (q) {
+    request = request.or(
+      `registered_name.ilike.%${q}%,registration_number.ilike.%${q}%`,
+    );
+  }
   if (excludeId) request = request.neq("id", excludeId);
 
   const { data } = await request;

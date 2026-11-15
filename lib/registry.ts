@@ -104,6 +104,20 @@ export type RegistryHorse = Awaited<
   ReturnType<typeof listRegistry>
 >["horses"][number];
 
+/** A member's approved horses, newest first, for their public page. */
+export async function listOwnerHorses(ownerId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("horses")
+    .select(COLUMNS)
+    .eq("status", "approved")
+    .eq("owner_id", ownerId)
+    .order("registration_date", { ascending: false, nullsFirst: false })
+    .order("registered_name");
+  if (error) throw error;
+  return data;
+}
+
 /** The latest approved horses, for the home page. */
 export async function recentRegistrations(limit: number) {
   const { horses } = await listRegistry({

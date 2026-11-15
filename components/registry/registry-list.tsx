@@ -12,7 +12,14 @@ function HorseNumber({ horse }: { horse: RegistryHorse }) {
 }
 
 /** Register-style table on larger screens, stacked records on phones. */
-export function RegistryList({ horses }: { horses: RegistryHorse[] }) {
+export function RegistryList({
+  horses,
+  showOwner = true,
+}: {
+  horses: RegistryHorse[];
+  /** Off on a member's own page, where every row has the same owner. */
+  showOwner?: boolean;
+}) {
   return (
     <>
       <div className="hidden md:block">
@@ -27,7 +34,7 @@ export function RegistryList({ horses }: { horses: RegistryHorse[] }) {
               <TH>Breed</TH>
               <TH>Sex</TH>
               <TH className="hidden xl:table-cell">Coat</TH>
-              <TH>Owner</TH>
+              {showOwner && <TH>Owner</TH>}
               <TH className="text-right">Registered</TH>
             </tr>
           </THead>
@@ -64,7 +71,7 @@ export function RegistryList({ horses }: { horses: RegistryHorse[] }) {
                   <TD className="hidden text-saddle xl:table-cell">
                     {h.phenotype}
                   </TD>
-                  <TD>{ownerName(h)}</TD>
+                  {showOwner && <TD>{ownerName(h)}</TD>}
                   <TD className="text-right text-sm whitespace-nowrap text-dust">
                     {date && formatDate(date)}
                   </TD>
@@ -98,7 +105,7 @@ export function RegistryList({ horses }: { horses: RegistryHorse[] }) {
                     .join(" · ")}
                 </p>
                 <p className="text-sm text-dust">
-                  {[ownerName(h), date && formatDate(date)]
+                  {[showOwner && ownerName(h), date && formatDate(date)]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>

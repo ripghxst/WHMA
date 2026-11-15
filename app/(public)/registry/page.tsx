@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { PageBanner } from "@/components/layout/page-banner";
 import { RegistryList } from "@/components/registry/registry-list";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Pagination } from "@/components/ui/pagination";
@@ -82,25 +82,9 @@ async function Registry({
 export default function RegistryPage(props: PageProps<"/registry">) {
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-ink">
-        <Image
-          src={herdDesert}
-          alt=""
-          priority
-          placeholder="blur"
-          sizes="100vw"
-          className="absolute inset-0 -z-10 h-full w-full object-cover object-[50%_35%] opacity-50"
-        />
-        <div className="page-container pt-16 pb-8">
-          <h1 className="heading-caps text-3xl text-paper sm:text-4xl">
-            The Registry
-          </h1>
-          <p className="mt-2 max-w-xl text-paper/85">
-            Every horse registered with the Wild Horse &amp; Mustang
-            Association.
-          </p>
-        </div>
-      </section>
+      <PageBanner title="The Registry" image={herdDesert} position="50% 35%">
+        Every horse registered with the Wild Horse &amp; Mustang Association.
+      </PageBanner>
 
       <div className="page-container pt-8">
         <Suspense

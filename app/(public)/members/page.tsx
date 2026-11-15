@@ -3,6 +3,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { PageBanner } from "@/components/layout/page-banner";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -136,10 +137,8 @@ export default function MembersPage(props: PageProps<"/members">) {
       <PageBanner title="Members" image={herdRunning}>
         Association members and the horses they have registered.
       </PageBanner>
-      <div className="page-container pt-8">
-        <Suspense
-          fallback={<p className="py-12 text-dust italic">Loading members…</p>}
-        >
+      <div className="page-container min-h-svh pt-8">
+        <Suspense fallback={<PageLoading label="Loading members…" />}>
           <Members searchParams={props.searchParams} />
         </Suspense>
       </div>

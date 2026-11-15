@@ -43,7 +43,9 @@ export function Pagination({
           ← Prev
         </Link>
       ) : (
-        <span className={cn(item, "text-taupe")}>← Prev</span>
+        <span aria-disabled="true" className={cn(item, "text-dust opacity-70")}>
+          ← Prev
+        </span>
       )}
 
       {pageItems(page, totalPages).map((p, i) =>
@@ -78,7 +80,9 @@ export function Pagination({
           Next →
         </Link>
       ) : (
-        <span className={cn(item, "text-taupe")}>Next →</span>
+        <span aria-disabled="true" className={cn(item, "text-dust opacity-70")}>
+          Next →
+        </span>
       )}
     </nav>
   );

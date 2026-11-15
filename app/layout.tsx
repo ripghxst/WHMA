@@ -26,6 +26,8 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  // Makes Open Graph image and canonical URLs absolute.
+  metadataBase: new URL(site.url),
   title: {
     default: site.name,
     template: `%s · ${site.name}`,

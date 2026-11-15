@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { RegistryList } from "@/components/registry/registry-list";
 import { EmptyState } from "@/components/ui/empty-state";
 import { loadMember } from "@/lib/members";
@@ -85,14 +86,14 @@ async function MemberProfile({
 
 export default function MemberPage(props: PageProps<"/members/[id]">) {
   return (
-    <div className="page-container pt-10">
+    <div className="page-container min-h-svh pt-10">
       <Link
         href="/members"
         className="mb-6 inline-block label-caps text-rust hover:text-rust-deep"
       >
         Members
       </Link>
-      <Suspense fallback={<p className="py-12 text-dust italic">Loading…</p>}>
+      <Suspense fallback={<PageLoading />}>
         <MemberProfile params={props.params} />
       </Suspense>
     </div>

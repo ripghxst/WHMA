@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -81,7 +82,7 @@ async function EditHorse({
 export default function EditHorsePage(props: PageProps<"/horses/[ref]/edit">) {
   return (
     <div className="page-container py-14">
-      <Suspense fallback={<p className="text-dust italic">Loading…</p>}>
+      <Suspense fallback={<PageLoading />}>
         <EditHorse params={props.params} />
       </Suspense>
     </div>

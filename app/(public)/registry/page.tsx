@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { PageBanner } from "@/components/layout/page-banner";
 import { RegistryList } from "@/components/registry/registry-list";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -87,11 +88,7 @@ export default function RegistryPage(props: PageProps<"/registry">) {
       </PageBanner>
 
       <div className="page-container pt-8">
-        <Suspense
-          fallback={
-            <p className="py-12 text-dust italic">Loading the registry…</p>
-          }
-        >
+        <Suspense fallback={<PageLoading label="Loading the registry…" />}>
           <Registry searchParams={props.searchParams} />
         </Suspense>
       </div>

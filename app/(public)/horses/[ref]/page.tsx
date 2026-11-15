@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { PedigreeChart } from "@/components/horses/pedigree-chart";
 import { PhotoGallery } from "@/components/horses/photo-gallery";
 import { RecordDetail } from "@/components/horses/record-detail";
@@ -191,7 +192,7 @@ export default function HorsePage(props: PageProps<"/horses/[ref]">) {
       >
         The registry
       </Link>
-      <Suspense fallback={<p className="py-12 text-dust italic">Loading…</p>}>
+      <Suspense fallback={<PageLoading />}>
         <HorseProfile params={props.params} />
       </Suspense>
     </div>

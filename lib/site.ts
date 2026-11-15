@@ -1,5 +1,7 @@
 export const site = {
   name: "WHMA Horse Registry",
+  /** Public address of this site; set NEXT_PUBLIC_SITE_URL in production (T15). */
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   association: "Wild Horse & Mustang Association",
   mainSiteUrl: "https://ttr-whma.weebly.com",
   criteriaUrl: "https://ttr-whma.weebly.com/registration.html",

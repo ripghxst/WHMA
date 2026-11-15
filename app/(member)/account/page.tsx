@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { signOut } from "@/app/(auth)/actions";
 import { Button } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth";
@@ -53,11 +54,7 @@ export default function AccountPage() {
   return (
     <div className="page-container max-w-3xl py-14">
       <h1 className="heading-caps text-3xl text-ink">Your account</h1>
-      <Suspense
-        fallback={
-          <p className="mt-10 text-dust italic">Loading your account…</p>
-        }
-      >
+      <Suspense fallback={<PageLoading label="Loading your account…" />}>
         <AccountDetails />
       </Suspense>
     </div>

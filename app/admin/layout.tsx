@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { statusCounts } from "@/lib/admin";
 import { requireAdmin } from "@/lib/auth";
 
@@ -26,7 +27,9 @@ export default function AdminLayout({ children }: LayoutProps<"/admin">) {
   return (
     <Suspense
       fallback={
-        <div className="page-container py-14 text-dust italic">Loading…</div>
+        <div className="page-container">
+          <PageLoading />
+        </div>
       }
     >
       <AdminGate>{children}</AdminGate>

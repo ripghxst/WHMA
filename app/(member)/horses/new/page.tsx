@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { requireUser } from "@/lib/auth";
 import { loadBreeds } from "@/lib/breeds";
 import { emptyHorse } from "@/lib/validation/horse";
@@ -43,9 +44,7 @@ export default function NewHorsePage() {
         draft and come back later. Once submitted, the registration board will
         review it.
       </p>
-      <Suspense
-        fallback={<p className="text-dust italic">Loading the form…</p>}
-      >
+      <Suspense fallback={<PageLoading label="Loading the form…" />}>
         <NewHorse />
       </Suspense>
     </div>

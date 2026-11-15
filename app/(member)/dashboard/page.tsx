@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { PageLoading } from "@/components/ui/page-loading";
 import { Alert } from "@/components/ui/alert";
 import { ButtonLink } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -250,9 +251,7 @@ export default function DashboardPage(props: PageProps<"/dashboard">) {
         </div>
         <ButtonLink href="/horses/new">Register a horse</ButtonLink>
       </div>
-      <Suspense
-        fallback={<p className="text-dust italic">Loading your horses…</p>}
-      >
+      <Suspense fallback={<PageLoading label="Loading your horses…" />}>
         <Dashboard searchParams={props.searchParams} />
       </Suspense>
     </div>

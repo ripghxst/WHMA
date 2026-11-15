@@ -33,8 +33,6 @@ app/admin/         review queue and management (admins)
 components/        shared UI
 lib/supabase/      browser, server and proxy Supabase clients
 lib/types/         generated database types
-supabase/migrations/  versioned SQL schema
-scripts/           one-off scripts (data import)
-tasks/             delivery tickets + DESIGN.md
-docs/              client brief and source spreadsheets (not deployed)
+supabase/migrations/  versioned SQL schema (apply in order)
+supabase/templates/   auth email templates (paste into Supabase)
 ```

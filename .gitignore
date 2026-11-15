@@ -44,3 +44,11 @@ next-env.d.ts
 # secrets / local tooling
 docs/secrets.txt
 docs/messages*.txt
+
+# Project notes, client material and dev tooling: kept locally, never pushed.
+/docs/
+/tasks/
+/scripts/
+/.mcp.json
+/AGENTS.md
+/whma2_2.png

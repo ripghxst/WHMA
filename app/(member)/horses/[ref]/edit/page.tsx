@@ -7,43 +7,13 @@ import { ButtonLink } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { requireUser } from "@/lib/auth";
 import { loadBreeds } from "@/lib/breeds";
-import { isEditable, photoUrl } from "@/lib/horses";
-import { createClient } from "@/lib/supabase/server";
+import { loadHorseForForm } from "@/lib/horse-form-data";
+import { isEditable } from "@/lib/horses";
 
-import type { ParentOption } from "../../actions";
+import { saveHorse, syncPhotos } from "../../actions";
 import { HorseForm } from "../../horse-form";
-import type { ParentValue } from "../../parent-field";
 
 export const metadata: Metadata = { title: "Edit horse" };
-
-const parentColumns =
-  "id, registered_name, registration_number, is_foundation, breed:breeds!horses_breed_id_fkey(name, is_classified)";
-
-type LinkedParent = {
-  id: string;
-  registered_name: string;
-  registration_number: string | null;
-  is_foundation: boolean;
-  breed: { name: string; is_classified: boolean } | null;
-} | null;
-
-function toParent(
-  // Many-to-one self joins come back as an object; the generated types say array.
-  joined: NonNullable<LinkedParent> | NonNullable<LinkedParent>[] | null,
-  name: string | null,
-  breedId: number | null,
-): ParentValue {
-  const linked = Array.isArray(joined) ? (joined[0] ?? null) : joined;
-  const option: ParentOption | null = linked && {
-    id: linked.id,
-    name: linked.registered_name,
-    number: linked.registration_number,
-    breed: linked.breed?.name ?? null,
-    classified: linked.breed?.is_classified ?? false,
-    foundation: linked.is_foundation,
-  };
-  return { linked: option, name: name ?? "", breedId };
-}
 
 async function EditHorse({
   params,
@@ -52,26 +22,12 @@ async function EditHorse({
 }) {
   const { ref } = await params;
   const { userId } = await requireUser(`/horses/${ref}/edit`);
-  if (!/^[0-9a-f-]{36}$/i.test(ref)) notFound();
-
-  const supabase = await createClient();
-  // Self-joins embed by column (sire_id / dam_id); a constraint hint is ambiguous here.
-  const [{ data: horse, error }, breeds] = await Promise.all([
-    supabase
-      .from("horses")
-      .select(
-        `*, horse_photos(storage_path, is_primary, sort_order),
-         sire:sire_id(${parentColumns}),
-         dam:dam_id(${parentColumns})`,
-      )
-      .eq("id", ref)
-      .eq("owner_id", userId)
-      .maybeSingle(),
+  const [form, breeds] = await Promise.all([
+    loadHorseForForm(ref, userId),
     loadBreeds(),
   ]);
-
-  if (error) throw error;
-  if (!horse) notFound();
+  if (!form) notFound();
+  const { horse, ...initialValues } = form;
 
   if (!isEditable(horse.status)) {
     return (
@@ -96,19 +52,6 @@ async function EditHorse({
     );
   }
 
-  const photos = [...horse.horse_photos]
-    .sort((a, b) => a.sort_order - b.sort_order)
-    .map((p) => ({
-      key: p.storage_path,
-      kind: "existing" as const,
-      path: p.storage_path,
-      url: photoUrl(p.storage_path),
-    }));
-  const primary =
-    horse.horse_photos.find((p) => p.is_primary)?.storage_path ??
-    photos[0]?.key ??
-    null;
-
   return (
     <>
       <h1 className="heading-caps text-3xl text-ink">
@@ -120,29 +63,12 @@ async function EditHorse({
       </p>
       <HorseForm
         horseId={horse.id}
-        userId={userId}
-        initial={{
-          registered_name: horse.registered_name,
-          barn_name: horse.barn_name,
-          sex: horse.sex,
-          breed_id: horse.breed_id,
-          pedigree: horse.pedigree,
-          phenotype: horse.phenotype,
-          genotype: horse.genotype,
-          height: horse.height,
-          eye_color: horse.eye_color,
-          base_stats: horse.base_stats,
-          sire_id: horse.sire_id,
-          sire_name: horse.sire_name,
-          sire_breed_id: horse.sire_breed_id,
-          dam_id: horse.dam_id,
-          dam_name: horse.dam_name,
-          dam_breed_id: horse.dam_breed_id,
-        }}
-        initialSire={toParent(horse.sire, horse.sire_name, horse.sire_breed_id)}
-        initialDam={toParent(horse.dam, horse.dam_name, horse.dam_breed_id)}
-        initialPhotos={photos}
-        initialPrimaryKey={primary}
+        mode="member"
+        saveAction={saveHorse}
+        syncPhotosAction={syncPhotos}
+        photoFolder={userId}
+        returnTo="/dashboard"
+        {...initialValues}
         breeds={breeds}
         reviewNote={
           horse.status === "changes_requested" ? horse.review_note : null

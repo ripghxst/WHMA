@@ -8,6 +8,9 @@ import { cn } from "@/lib/cn";
 const items = [
   { href: "/admin", label: "Overview", exact: true },
   { href: "/admin/review", label: "Review queue" },
+  { href: "/admin/horses", label: "Horses" },
+  { href: "/admin/members", label: "Members" },
+  { href: "/admin/breeds", label: "Breeds" },
 ];
 
 /** Section tabs for the board's pages. Rendered inside the admin Suspense boundary. */

@@ -4,10 +4,12 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requireUser } from "@/lib/auth";
-import { EDITABLE_STATUSES, MAX_PHOTOS, PHOTO_BUCKET } from "@/lib/horses";
+import { applyPhotoManifest } from "@/lib/horse-photos";
+import { EDITABLE_STATUSES, MAX_PHOTOS } from "@/lib/horses";
 import { createClient } from "@/lib/supabase/server";
 import {
   horseSchema,
+  normalizeParents,
   photoManifestSchema,
   type HorseInput,
   type PhotoManifest,
@@ -33,15 +35,7 @@ export async function saveHorse(
     };
   }
 
-  // A linked parent replaces the manual name/breed, so keep only one of them.
-  const v = parsed.data;
-  const values = {
-    ...v,
-    sire_name: v.sire_id ? null : v.sire_name,
-    sire_breed_id: v.sire_id ? null : v.sire_breed_id,
-    dam_name: v.dam_id ? null : v.dam_name,
-    dam_breed_id: v.dam_id ? null : v.dam_breed_id,
-  };
+  const values = normalizeParents(parsed.data);
 
   const supabase = await createClient();
 
@@ -116,39 +110,7 @@ export async function syncPhotos(
     return { error: "This horse can no longer be edited." };
   }
 
-  const keep = new Set(parsed.data.map((p) => p.path));
-  const removed = horse.horse_photos.filter((p) => !keep.has(p.storage_path));
-  if (removed.length) {
-    await supabase.storage
-      .from(PHOTO_BUCKET)
-      .remove(removed.map((p) => p.storage_path));
-    await supabase
-      .from("horse_photos")
-      .delete()
-      .in(
-        "id",
-        removed.map((p) => p.id),
-      );
-  }
-
-  // Clear the primary flag first: only one photo per horse may hold it.
-  await supabase
-    .from("horse_photos")
-    .update({ is_primary: false })
-    .eq("horse_id", horseId);
-
-  const { error } = await supabase.from("horse_photos").upsert(
-    parsed.data.map((p, i) => ({
-      horse_id: horseId,
-      storage_path: p.path,
-      sort_order: i,
-      is_primary: p.isPrimary,
-    })),
-    { onConflict: "storage_path" },
-  );
-  if (error) return { error: "Your photos could not be saved." };
-
-  return {};
+  return applyPhotoManifest(supabase, horseId, horse.horse_photos, parsed.data);
 }
 
 export type ParentOption = {

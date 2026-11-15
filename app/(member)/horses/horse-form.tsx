@@ -11,9 +11,13 @@ import { Field, Input, Select } from "@/components/ui/field";
 import { missingForSubmission, PHOTO_BUCKET } from "@/lib/horses";
 import { site } from "@/lib/site";
 import { createClient } from "@/lib/supabase/client";
-import type { HorseInput } from "@/lib/validation/horse";
+import type {
+  BoardInput,
+  HorseInput,
+  PhotoManifest,
+} from "@/lib/validation/horse";
 
-import { saveHorse, syncPhotos } from "./actions";
+import type { SaveResult } from "./actions";
 import {
   BreedOptions,
   ParentField,
@@ -22,9 +26,29 @@ import {
 } from "./parent-field";
 import { PhotoField, type PhotoItem } from "./photo-field";
 
+export type HorseFormInput = HorseInput & { board?: BoardInput };
+
 type Props = {
   horseId: string | null;
-  userId: string;
+  /** "member" registers and submits; "board" edits any horse and its board-only fields. */
+  mode: "member" | "board";
+  saveAction: (
+    input: HorseFormInput,
+    horseId: string | null,
+  ) => Promise<SaveResult>;
+  syncPhotosAction: (
+    horseId: string,
+    manifest: PhotoManifest,
+  ) => Promise<{ error?: string }>;
+  /** First storage folder for new uploads: the member's id, or "board". */
+  photoFolder: string;
+  /** Where to go after saving. */
+  returnTo: string;
+  /** Board mode only: current board fields and the members who can own a horse. */
+  board?: {
+    initial: BoardInput;
+    members: { id: string; name: string }[];
+  };
   initial: HorseInput;
   initialSire: ParentValue;
   initialDam: ParentValue;
@@ -75,7 +99,9 @@ export function HorseForm(props: Props) {
   const [errors, setErrors] = useState<Errors>({});
   const [formError, setFormError] = useState<string | null>(null);
   const [step, setStep] = useState<string | null>(null);
+  const [board, setBoard] = useState(props.board?.initial);
   const resubmitting = Boolean(props.reviewNote);
+  const isBoard = props.mode === "board";
 
   const set = <K extends keyof HorseInput>(key: K, value: HorseInput[K]) =>
     setValues((v) => ({ ...v, [key]: value }));
@@ -106,6 +132,7 @@ export function HorseForm(props: Props) {
       dam_name: dam.linked ? null : dam.name,
       dam_breed_id: dam.linked ? null : dam.breedId,
     };
+    const payload: HorseFormInput = board ? { ...input, board } : input;
 
     if (intent === "submit") {
       const missing = missingForSubmission(input, photos.length);
@@ -124,13 +151,13 @@ export function HorseForm(props: Props) {
 
     try {
       setStep("Saving…");
-      const saved = await saveHorse(input, horseId.current);
+      const saved = await props.saveAction(payload, horseId.current);
       if (!saved.ok) {
         setErrors(
           Object.fromEntries(
             Object.entries(saved.fieldErrors ?? {}).map(([k, v]) => [
               // sire_id / sire_name / sire_breed_id all belong to the Sire box.
-              k.replace(/^(sire|dam)_.*/, "$1"),
+              k.replace(/^(sire|dam)_.*/, "$1").replace(/^board\./, ""),
               v[0],
             ]),
           ),
@@ -146,7 +173,7 @@ export function HorseForm(props: Props) {
         const photo = uploaded[i];
         if (photo.kind !== "new") continue;
         setStep(`Uploading photos (${i + 1} of ${uploaded.length})…`);
-        const path = `${props.userId}/${saved.id}/${crypto.randomUUID()}.${extension[photo.blob.type] ?? "jpg"}`;
+        const path = `${props.photoFolder}/${saved.id}/${crypto.randomUUID()}.${extension[photo.blob.type] ?? "jpg"}`;
         const { error } = await supabase.storage
           .from(PHOTO_BUCKET)
           .upload(path, photo.blob, { contentType: photo.blob.type });
@@ -165,7 +192,7 @@ export function HorseForm(props: Props) {
       }
 
       setStep("Saving photos…");
-      const synced = await syncPhotos(
+      const synced = await props.syncPhotosAction(
         saved.id,
         uploaded.map((p) => ({
           path: p.kind === "existing" ? p.path : "",
@@ -187,8 +214,11 @@ export function HorseForm(props: Props) {
       }
 
       router.push(
-        `/dashboard?${intent === "submit" ? "submitted" : "saved"}=1`,
+        isBoard
+          ? props.returnTo
+          : `${props.returnTo}?${intent === "submit" ? "submitted" : "saved"}=1`,
       );
+      router.refresh();
     } catch {
       setFormError("Something went wrong. Please try again.");
     } finally {
@@ -203,7 +233,8 @@ export function HorseForm(props: Props) {
       noValidate
       onSubmit={(e) => {
         e.preventDefault();
-        void save("submit");
+        // Enter in a field: members submit, the board just saves.
+        void save(isBoard ? "draft" : "submit");
       }}
       className="flex flex-col gap-10"
     >
@@ -245,6 +276,79 @@ export function HorseForm(props: Props) {
           </Field>
         </div>
       </Section>
+
+      {isBoard && board && (
+        <Section
+          title="Board record"
+          hint="Only the registration board can change these."
+        >
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Field
+              id="registration_number"
+              label="WHMA number"
+              hint="Leave empty for Foundation horses without a number."
+              error={errors.registration_number}
+            >
+              <Input
+                className="font-mono! uppercase"
+                value={board.registration_number ?? ""}
+                onChange={(e) =>
+                  setBoard({ ...board, registration_number: e.target.value })
+                }
+              />
+            </Field>
+            <Field
+              id="registration_date"
+              label="Registration date"
+              error={errors.registration_date}
+            >
+              <Input
+                type="date"
+                value={board.registration_date ?? ""}
+                onChange={(e) =>
+                  setBoard({
+                    ...board,
+                    registration_date: e.target.value || null,
+                  })
+                }
+              />
+            </Field>
+          </div>
+          <div className="grid gap-5 sm:grid-cols-2 sm:items-end">
+            <Field
+              id="owner_id"
+              label="Owner"
+              hint="The member account this horse belongs to."
+              error={errors.owner_id}
+            >
+              <Select
+                value={board.owner_id ?? ""}
+                onChange={(e) =>
+                  setBoard({ ...board, owner_id: e.target.value || null })
+                }
+              >
+                <option value="">No owner (Foundation or imported)</option>
+                {props.board?.members.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
+                ))}
+              </Select>
+            </Field>
+            <label className="flex h-11 items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={board.is_foundation}
+                onChange={(e) =>
+                  setBoard({ ...board, is_foundation: e.target.checked })
+                }
+                className="accent-rust"
+              />
+              Foundation horse
+            </label>
+          </div>
+        </Section>
+      )}
 
       <Section
         title="Breed & genetics"
@@ -386,17 +490,28 @@ export function HorseForm(props: Props) {
       <div className="sticky bottom-0 -mx-4 flex flex-col gap-3 border-t border-rule bg-paper px-4 py-4 sm:-mx-6 sm:px-6">
         {formError && <Alert tone="error">{formError}</Alert>}
         <div className="flex flex-wrap items-center gap-3">
-          <Button type="submit" disabled={busy}>
-            {resubmitting ? "Resubmit for review" : "Submit for review"}
-          </Button>
-          <Button
-            variant="secondary"
-            disabled={busy}
-            onClick={() => void save("draft")}
+          {isBoard ? (
+            <Button disabled={busy} onClick={() => void save("draft")}>
+              Save changes
+            </Button>
+          ) : (
+            <>
+              <Button type="submit" disabled={busy}>
+                {resubmitting ? "Resubmit for review" : "Submit for review"}
+              </Button>
+              <Button
+                variant="secondary"
+                disabled={busy}
+                onClick={() => void save("draft")}
+              >
+                {resubmitting ? "Save changes" : "Save draft"}
+              </Button>
+            </>
+          )}
+          <Link
+            href={props.returnTo}
+            className="text-sm text-dust hover:text-ink"
           >
-            {resubmitting ? "Save changes" : "Save draft"}
-          </Button>
-          <Link href="/dashboard" className="text-sm text-dust hover:text-ink">
             Cancel
           </Link>
           {step && (

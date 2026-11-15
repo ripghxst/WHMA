@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/auth";
 import { loadBreeds } from "@/lib/breeds";
 import { emptyHorse } from "@/lib/validation/horse";
 
+import { saveHorse, syncPhotos } from "../actions";
 import { HorseForm } from "../horse-form";
 
 export const metadata: Metadata = { title: "Register a horse" };
@@ -17,7 +18,11 @@ async function NewHorse() {
   return (
     <HorseForm
       horseId={null}
-      userId={userId}
+      mode="member"
+      saveAction={saveHorse}
+      syncPhotosAction={syncPhotos}
+      photoFolder={userId}
+      returnTo="/dashboard"
       initial={emptyHorse}
       initialSire={noParent}
       initialDam={noParent}

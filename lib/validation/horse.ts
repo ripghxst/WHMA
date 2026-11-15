@@ -37,6 +37,35 @@ export const horseSchema = z.object({
 export type HorseInput = z.input<typeof horseSchema>;
 export type HorseValues = z.output<typeof horseSchema>;
 
+/** A linked parent replaces the manual name and breed, so keep only one of them. */
+export function normalizeParents<T extends HorseValues>(v: T): T {
+  return {
+    ...v,
+    sire_name: v.sire_id ? null : v.sire_name,
+    sire_breed_id: v.sire_id ? null : v.sire_breed_id,
+    dam_name: v.dam_id ? null : v.dam_name,
+    dam_breed_id: v.dam_id ? null : v.dam_breed_id,
+  };
+}
+
+/** Fields only the registration board can set. */
+export const boardSchema = z.object({
+  registration_number: z
+    .string()
+    .trim()
+    .toUpperCase()
+    .nullable()
+    .transform((v) => v || null)
+    .refine((v) => v === null || /^WHMA-[A-Z]{2}[12]?-[0-9]{6}$/.test(v), {
+      message: "Use the format WHMA-AM2-123456, or leave it empty.",
+    }),
+  owner_id: z.guid().nullable(),
+  is_foundation: z.boolean(),
+  registration_date: z.iso.date("Use a valid date.").nullable(),
+});
+
+export type BoardInput = z.input<typeof boardSchema>;
+
 export const emptyHorse: HorseInput = {
   registered_name: "",
   barn_name: "",

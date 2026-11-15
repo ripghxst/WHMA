@@ -39,7 +39,13 @@ function AncestorBox({
     >
       <p className="label-caps text-dust">{person.role}</p>
       {unknown ? (
-        <p className="text-dust italic">Unknown</p>
+        <>
+          <p className="text-dust italic">Unknown</p>
+          {/* Foundation records often know the breed but not the name. */}
+          {person.breed && (
+            <p className="mt-0.5 text-sm text-saddle">{person.breed}</p>
+          )}
+        </>
       ) : (
         <>
           <p className="leading-snug text-ink">{person.name}</p>

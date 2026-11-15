@@ -528,6 +528,15 @@ export type Database = {
         Args: { p_horse_id: string }
         Returns: string
       }
+      review_horse: {
+        Args: {
+          p_action: Database["public"]["Enums"]["review_action"]
+          p_horse_id: string
+          p_note?: string
+          p_registration_number?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "member" | "admin"

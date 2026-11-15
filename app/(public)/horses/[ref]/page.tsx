@@ -6,6 +6,7 @@ import { Suspense } from "react";
 
 import { PedigreeChart } from "@/components/horses/pedigree-chart";
 import { PhotoGallery } from "@/components/horses/photo-gallery";
+import { RecordDetail } from "@/components/horses/record-detail";
 import { formatDate } from "@/lib/format";
 import { loadHorse } from "@/lib/horse-profile";
 import { photoUrl, primaryPhoto, sexLabel } from "@/lib/horses";
@@ -37,25 +38,6 @@ export async function generateMetadata({
       images: photo ? [photoUrl(photo.storage_path)] : undefined,
     },
   };
-}
-
-function Detail({
-  label,
-  mono,
-  children,
-}: {
-  label: string;
-  mono?: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="grid grid-cols-[8rem_1fr] gap-3 border-b border-rule py-2.5 last:border-b-0">
-      <dt className="pt-0.5 label-caps text-saddle">{label}</dt>
-      <dd className={mono ? "font-mono text-sm text-ink" : "text-ink"}>
-        {children || <span className="text-dust">Not recorded</span>}
-      </dd>
-    </div>
-  );
 }
 
 async function HorseProfile({
@@ -119,27 +101,29 @@ async function HorseProfile({
             Registration record
           </h2>
           <dl>
-            <Detail label="WHMA number" mono>
+            <RecordDetail label="WHMA number" mono>
               {horse.registration_number ??
                 (horse.is_foundation && "Foundation")}
-            </Detail>
-            <Detail label="Barn name">{horse.barn_name}</Detail>
-            <Detail label="Sex">{sexLabel(horse.sex)}</Detail>
-            <Detail label="Listed breed">{horse.breed?.name}</Detail>
-            <Detail label="Pedigree">{horse.pedigree}</Detail>
-            <Detail label="Coat">{horse.phenotype}</Detail>
-            <Detail label="Genotype" mono>
+            </RecordDetail>
+            <RecordDetail label="Barn name">{horse.barn_name}</RecordDetail>
+            <RecordDetail label="Sex">{sexLabel(horse.sex)}</RecordDetail>
+            <RecordDetail label="Listed breed">
+              {horse.breed?.name}
+            </RecordDetail>
+            <RecordDetail label="Pedigree">{horse.pedigree}</RecordDetail>
+            <RecordDetail label="Coat">{horse.phenotype}</RecordDetail>
+            <RecordDetail label="Genotype" mono>
               {horse.genotype}
-            </Detail>
-            <Detail label="Height">{horse.height}</Detail>
-            <Detail label="Eye colour">{horse.eye_color}</Detail>
-            <Detail label="Base stats" mono>
+            </RecordDetail>
+            <RecordDetail label="Height">{horse.height}</RecordDetail>
+            <RecordDetail label="Eye colour">{horse.eye_color}</RecordDetail>
+            <RecordDetail label="Base stats" mono>
               {horse.base_stats}
-            </Detail>
-            <Detail label="Registered">
+            </RecordDetail>
+            <RecordDetail label="Registered">
               {registered && formatDate(registered)}
-            </Detail>
-            <Detail label="Owner">
+            </RecordDetail>
+            <RecordDetail label="Owner">
               {horse.owner ? (
                 <Link
                   href={`/members/${horse.owner.id}`}
@@ -150,7 +134,7 @@ async function HorseProfile({
               ) : (
                 (ownerLabel ?? (horse.is_foundation && "WHMA Foundation"))
               )}
-            </Detail>
+            </RecordDetail>
           </dl>
         </section>
       </div>
